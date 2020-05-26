@@ -1,0 +1,10 @@
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ebf5f5;
+  background-image: url("https://transparenttextures.com/patterns/batthern.png");
+}

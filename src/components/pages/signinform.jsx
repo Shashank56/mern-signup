@@ -1,17 +1,28 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import {BrowserRouter as Router,Switch,Route,Link,Redirect,useHistory,useLocation} from "react-router-dom";
+import axios from 'axios';
 
 class SignInForm extends Component {
     constructor() {
         super();
-
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            usersCollection: []
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    componentDidMount() {
+      axios.get('http://localhost:4000/users')
+          .then(res => {
+              this.setState({ usersCollection: res.data });
+              console.log(this.state.usersCollection)
+          })
+          .catch(function (error) {
+              console.log(error);
+          })
     }
 
     handleChange(e) {
@@ -26,9 +37,17 @@ class SignInForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
+        
         console.log('The form was submitted with the following data:');
         console.log(this.state);
+        var k;
+        for(k=0;k<this.state.usersCollection.length;k++)
+        {
+          if(this.state.usersCollection[k]['user_email']===this.state.email && this.state.usersCollection[k]['user_password']===this.state.password)
+          {
+            console.log("authenticated")
+          }
+        }
     }
 
     render() {
@@ -46,7 +65,7 @@ class SignInForm extends Component {
               </div>
 
               <div className="FormField">
-                  <button className="FormField__Button mr-20">Sign In</button> <Link to="/" className="FormField__Link">Create an account</Link>
+                  <button className="FormField__Button mr-20">Sign In</button>
               </div>
             </form>
           </div>

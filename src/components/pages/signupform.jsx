@@ -44,8 +44,15 @@ class SignUpForm extends Component {
 			};
 	
 		
-		axios.post('http://localhost:4000/add', newUser)
-						.then(res => console.log(res.data));
+			axios.post('http://localhost:4000/users/create', newUser)
+            .then((res) => {
+				console.log(res.data)
+				alert("registerd succesfully..!!!")
+            }).catch((error) => {
+                console.log(error)
+            });
+
+        	this.setState({ name: '', email: '',password:'' })
 		}
 	}
 

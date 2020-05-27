@@ -9,10 +9,13 @@ let user = new Schema({
     user_email: {
         type: String    
     },
-    password:{
+    user_password:{
         type:String
-    }    
-});
+    }
+},
+    {
+        collection : 'users'
+    })
 
 user.methods.generateHash = function(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

@@ -1,49 +1,40 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const userRoutes=express.Router();
+let express = require('express');
+let mongoose = require('mongoose');
+let cors = require('cors');
+let bodyParser = require('body-parser');
+let database = require('./database/db');
 const PORT = 4000;
+const userRoute = require('./routes/user.routes')
+const MongoClient = require("mongodb").MongoClient;
+mongoose.Promise = global.Promise;
+mongoose.connect(database.db, {
+    useNewUrlParser: true
+}).then(() => {
+    console.log('Database connected sucessfully !')
+},
+    error => {
+        console.log('Database could not be connected : ' + error)
+    }
+)
 
-let user = require('./user.model')
-
-app.use(cors());
+const app = express();
 app.use(bodyParser.json());
-
-app.get('/', (req, res) => {
-    res.send('Hello World')
-        })
-
-mongoose.connect('mongodb://127.0.0.1:27017/users', { useNewUrlParser: true });
-const connection = mongoose.connection;
-
-connection.once('open', function() {
-    console.log("MongoDB database connection established successfully");
-})
-
-userRoutes.route('/').get(function(req, res) {
-    user.find(function(err, users) {
-        if (err) {
-            res.end('hello\n');
-            console.log(err);
-        } else {
-            res.json(users);
-        }
-    });
-});
-
-userRoutes.route('/add').post(function(req, res) {
-    let user = new user(req.body);
-    user.save()
-        .then(user => {
-            res.status(200).json({'user': 'user added successfully'});
-        })
-        .catch(err => {
-            res.status(400).send('adding new user failed');
-        });
-});
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(cors());
+app.use('/users', userRoute)
 
 app.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
+});
+
+app.use((req, res, next) => {
+    next(createError(404));
+});
+
+app.use(function (err, req, res, next) {
+    console.error(err.message);
+    if (!err.statusCode) err.statusCode = 500;
+    res.status(err.statusCode).send(err.message);
 });

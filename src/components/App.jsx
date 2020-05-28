@@ -8,7 +8,7 @@ function App() {
     <Router>
     	<div>
 			<Link className="link" to='/'>Home</Link>
-			<Link className="link" to='/login'>Login</Link>
+			<Link className="link" to='/login'>User</Link>
         	<Switch>
         		<Route path="/login">
         	    	<Login />

@@ -3,12 +3,13 @@ import {BrowserRouter as Router,Switch,Route,Link,Redirect,useHistory,useLocatio
 import axios from 'axios';
 
 class SignInForm extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             email: '',
             password: '',
-            usersCollection: []
+            usersCollection: [],
+            isauth : false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -18,13 +19,12 @@ class SignInForm extends Component {
       axios.get('http://localhost:4000/users')
           .then(res => {
               this.setState({ usersCollection: res.data });
-              console.log(this.state.usersCollection)
           })
           .catch(function (error) {
               console.log(error);
           })
     }
-
+    
     handleChange(e) {
         let target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
@@ -37,17 +37,18 @@ class SignInForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        
-        console.log('The form was submitted with the following data:');
-        console.log(this.state);
         var k;
         for(k=0;k<this.state.usersCollection.length;k++)
         {
           if(this.state.usersCollection[k]['user_email']===this.state.email && this.state.usersCollection[k]['user_password']===this.state.password)
           {
             console.log("authenticated")
+            this.state.isauth = true
+            console.log(this.state);
           }
         }
+        this.props.callbackFunction(this.state.isauth);
+
     }
 
     render() {
@@ -65,7 +66,7 @@ class SignInForm extends Component {
               </div>
 
               <div className="FormField">
-                  <button className="FormField__Button mr-20">Sign In</button>
+                  <button className="FormField__Button mr-20" >Sign In</button>
               </div>
             </form>
           </div>
